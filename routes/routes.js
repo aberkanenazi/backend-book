@@ -1,64 +1,71 @@
 const express = require("express");
-const Model = require("../models/model");
+const Book = require("../models/book"); // Make sure the path is correct
 
 const router = express.Router();
 
 module.exports = router;
 
-//Post Method
-router.post("/post", async (req, res) => {
-  const data = new Model({
-    name: req.body.name,
-    age: req.body.age,
+// Create a new book
+router.post("/books", async (req, res) => {
+  const book = new Book({
+    title: req.body.title,
+    author: req.body.author,
+    publicationYear: req.body.publicationYear,
+    genre: req.body.genre,
+    pages: req.body.pages,
+    publisher: req.body.publisher,
+    ISBN: req.body.ISBN,
+    summary: req.body.summary,
   });
 
   try {
-    const dataToSave = await data.save();
-    res.status(200).json(dataToSave);
+    const bookToSave = await book.save();
+    res.status(200).json(bookToSave);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
 });
 
-//Get all Method
-router.get("/getAll", async (req, res) => {
+// Get all books
+router.get("/books", async (req, res) => {
   try {
-    const data = await Model.find();
-    res.json(data);
+    const books = await Book.find();
+    res.json(books);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 });
 
-//Get by ID Method
-router.get("/getOne/:id", async (req, res) => {
+// Get a book by ID
+router.get("/books/:id", async (req, res) => {
   try {
-    const data = await Model.findById(req.params.id);
-    res.json(data);
+    const book = await Book.findById(req.params.id);
+    res.json(book);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 });
 
-//Update by ID Method
-router.patch("/update/:id", async (req, res) => {
+// Update a book by ID
+router.patch("/books/:id", async (req, res) => {
   const id = req.params.id;
   const updatedData = req.body;
   const options = { new: true };
+
   try {
-    const data = await Model.findByIdAndUpdate(id, updatedData, options);
-    res.json(data);
+    const book = await Book.findByIdAndUpdate(id, updatedData, options);
+    res.json(book);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 });
 
-//Delete by ID Method
-router.delete("/delete/:id", async (req, res) => {
+// Delete a book by ID
+router.delete("/books/:id", async (req, res) => {
   try {
     const id = req.params.id;
-    const data = await Model.findByIdAndDelete(id);
-    res.send(`Document with ${data.name} has been deleted..`);
+    const book = await Book.findByIdAndDelete(id);
+    res.send(`Document with title ${book.title} has been deleted.`);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
